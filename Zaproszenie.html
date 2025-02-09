@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walentynkowe pytanie</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: opacity 1s ease-in-out;
+        }
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .heart {
+            font-size: 50px;
+            color: red;
+            transition: transform 0.5s ease-in-out, opacity 0.5s;
+        }
+        .heart.animate {
+            animation: glow 1s infinite alternate, bounce 0.6s ease-in-out, rotate3D 3s infinite linear;
+        }
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px red; }
+            100% { text-shadow: 0 0 20px red; }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes rotate3D {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .yes {
+            background-color: red;
+            color: white;
+        }
+        .no {
+            background-color: gray;
+            color: white;
+            cursor: not-allowed;
+        }
+        .heart-fall {
+            position: fixed;
+            top: 0;
+            font-size: 24px;
+            color: red;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        .countdown {
+            font-size: 30px;
+            font-weight: normal;
+            color: red;
+            text-shadow: 0 0 5px red, 0 0 10px red, 0 0 15px red;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+            position: absolute;
+            top: 80%;
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="intro">
+        <h2>Hej Cześka! Zostało już zaledwie parę dni, więc mam do Ciebie baardzo ważne pytanie.... Czy chcesz je usłyszeć?</h2>
+        <button class="yes" onclick="showQuestion()">Tak</button>
+        <button class="yes" onclick="showQuestion()">Tak</button>
+    </div>
+
+    <div class="card hidden" id="question">
+        <div class="heart" id="bigHeart">❤️</div>
+        <h2>Czy zostaniesz moją Walentynką?</h2>
+        <button class="yes" onclick="sayYes()">Tak</button>
+        <button class="no" disabled>Nie</button>
+        <p id="response"></p>
+    </div>
+    
+    <div id="countdown" class="countdown"></div>
+
+    <script>
+        function showQuestion() {
+            let intro = document.getElementById("intro");
+            let question = document.getElementById("question");
+            intro.classList.add("hidden");
+            setTimeout(() => {
+                intro.style.display = "none";
+                question.classList.remove("hidden");
+            }, 1000);
+        }
+
+        function sayYes() {
+            document.getElementById("response").innerText = "Mosz Szczyńście ❤️";
+            document.getElementById("bigHeart").classList.add("animate");
+            setInterval(startHeartRain, 200);
+            let countdown = document.getElementById("countdown");
+            setTimeout(() => countdown.style.opacity = 1, 500);
+            startCountdown();
+        }
+
+        function startHeartRain() {
+            for (let i = 0; i < 5; i++) {
+                let heart = document.createElement("div");
+                heart.innerHTML = "❤️";
+                heart.classList.add("heart-fall");
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
+                heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 5000);
+            }
+        }
+
+        function startCountdown() {
+            const targetDate = new Date("February 14, 2025 00:00:00").getTime();
+            setInterval(() => {
+                const now = new Date().getTime();
+                const timeLeft = targetDate - now;
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                document.getElementById("countdown").innerText = `Czas do Walentynek: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
